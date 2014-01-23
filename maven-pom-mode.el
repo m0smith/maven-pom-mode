@@ -1,6 +1,6 @@
 ;;; maven-pom-mode.el --- A major mode for pom files
 
-;; Copyright (c) 2014 Matthew O. Smiht
+;; Copyright (c) 2014 Matthew O. Smith
 ;; Author: 
 ;;     Matthew Smith
 ;; URL: http://www.github.com/m0smith/maven-pom-mode
