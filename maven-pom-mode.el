@@ -47,6 +47,9 @@
   :group 'maven-pom-mode
   :type 'directory)
 
-
-(add-to-list 'rng-schema-locating-files (expand-file-name (format "%s/%s" maven-pom-mode-install-directory
-								  "schemas.xml")))
+(eval-after-load 'nxml-mode
+  '(progn
+     (add-to-list 'rng-schema-locating-files 
+		  (expand-file-name (format "%s/%s" 
+					    maven-pom-mode-install-directory
+					    "schemas.xml")))))
