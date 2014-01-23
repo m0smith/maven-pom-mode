@@ -9,4 +9,4 @@ I am creating this mode to pull together a lot of the ideas on pom editting from
 ## Acknoledgements
 
 I am indeed standing on the shoulders of giants included:
-*  torstein.k.johansen for nXML integration ideas and files
+*  [torstein.k.johansen](http://tkj.freeshell.org/emacs/xml/#my-rnc-files) for nXML integration ideas and files
