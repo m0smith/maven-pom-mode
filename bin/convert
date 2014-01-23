@@ -2,7 +2,7 @@
 
 
 prjdir=`dirname $(cd $(dirname $0) && pwd)`
-echo $prjdir
+
 d=$prjdir/target
 
 mkdir -p "$d"
@@ -19,7 +19,6 @@ rngconvdir=$d/rngconv-20060319
 
 wget http://maven.apache.org/maven-v4_0_0.xsd
 
-echo $d
 java -jar `cygpath -w "$rngconvdir/rngconv.jar"` maven-v4_0_0.xsd > maven-v4_0_0.rng
 java -jar `cygpath -w "$trangdir/trang.jar"` -I rng -O rnc maven-v4_0_0.rng  maven-v4_0_0.rnc
 
