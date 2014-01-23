@@ -1,9 +1,11 @@
 default namespace = "http://maven.apache.org/POM/4.0.0"
+namespace xsi = "http://www.w3.org/2001/XMLSchema-instance"
 
 start =
   notAllowed
   | element project {
-      element parent {
+      attribute xsi:schemaLocation { string }
+      & element parent {
         element artifactId { \string }?
         & element groupId { \string }?
         & element version { \string }?
@@ -205,6 +207,34 @@ start =
       & element distributionManagement { DistributionManagement }?
       & element properties { element0* }?
     }
+DeploymentRepository =
+  ((notAllowed
+    | element uniqueVersion { boolean })?
+   & (notAllowed
+      | element id { \string })?
+   & (notAllowed
+      | element name { \string })?
+   & (notAllowed
+      | element url { \string })?
+   & (notAllowed
+      | element layout { \string })?),
+  empty
+Resource =
+  ((notAllowed
+    | element targetPath { \string })?
+   & (notAllowed
+      | element filtering { boolean })?
+   & (notAllowed
+      | element directory { \string })?
+   & (notAllowed
+      | element includes {
+          element include { \string }*
+        })?
+   & (notAllowed
+      | element excludes {
+          element exclude { \string }*
+        })?),
+  empty
 element1 =
   element * {
     mixed {
@@ -289,6 +319,38 @@ element6 =
        | attribute * { text })*
     }
   }
+Plugin =
+  ((notAllowed
+    | element groupId { \string })?
+   & (notAllowed
+      | element artifactId { \string })?
+   & (notAllowed
+      | element version { \string })?
+   & (notAllowed
+      | element extensions { boolean })?
+   & (notAllowed
+      | element executions {
+          element execution {
+            element id { \string }?
+            & element phase { \string }?
+            & element goals {
+                element goal { \string }*
+              }?
+            & element inherited { \string }?
+            & element configuration { element9* }?
+          }*
+        })?
+   & (notAllowed
+      | element dependencies {
+          element dependency { Dependency }*
+        })?
+   & (notAllowed
+      | element goals { element10* })?
+   & (notAllowed
+      | element inherited { \string })?
+   & (notAllowed
+      | element configuration { element11* })?),
+  empty
 Dependency =
   ((notAllowed
     | element groupId { \string })?
@@ -314,6 +376,40 @@ Dependency =
    & (notAllowed
       | element optional { boolean })?),
   empty
+PluginManagement =
+  (notAllowed
+   | element plugins {
+       element plugin { Plugin }*
+     })?,
+  empty
+Reporting =
+  ((notAllowed
+    | element excludeDefaults { boolean })?
+   & (notAllowed
+      | element outputDirectory { \string })?
+   & (notAllowed
+      | element plugins {
+          element plugin {
+            element groupId { \string }?
+            & element artifactId { \string }?
+            & element version { \string }?
+            & element inherited { \string }?
+            & element configuration { element4* }?
+            & element reportSets {
+                element reportSet {
+                  element id { \string }?
+                  & element configuration { element3* }?
+                  & element inherited { \string }?
+                  & element reports {
+                      element report { \string }*
+                    }?
+                }*
+              }?
+          }*
+        })?),
+  empty
+boolean = xsd:boolean
+\string = xsd:string
 Repository =
   ((notAllowed
     | element releases { RepositoryPolicy })?
@@ -351,106 +447,6 @@ DistributionManagement =
    & (notAllowed
       | element status { \string })?),
   empty
-DeploymentRepository =
-  ((notAllowed
-    | element uniqueVersion { boolean })?
-   & (notAllowed
-      | element id { \string })?
-   & (notAllowed
-      | element name { \string })?
-   & (notAllowed
-      | element url { \string })?
-   & (notAllowed
-      | element layout { \string })?),
-  empty
-boolean = xsd:boolean
-Resource =
-  ((notAllowed
-    | element targetPath { \string })?
-   & (notAllowed
-      | element filtering { boolean })?
-   & (notAllowed
-      | element directory { \string })?
-   & (notAllowed
-      | element includes {
-          element include { \string }*
-        })?
-   & (notAllowed
-      | element excludes {
-          element exclude { \string }*
-        })?),
-  empty
-Reporting =
-  ((notAllowed
-    | element excludeDefaults { boolean })?
-   & (notAllowed
-      | element outputDirectory { \string })?
-   & (notAllowed
-      | element plugins {
-          element plugin {
-            element groupId { \string }?
-            & element artifactId { \string }?
-            & element version { \string }?
-            & element inherited { \string }?
-            & element configuration { element4* }?
-            & element reportSets {
-                element reportSet {
-                  element id { \string }?
-                  & element configuration { element3* }?
-                  & element inherited { \string }?
-                  & element reports {
-                      element report { \string }*
-                    }?
-                }*
-              }?
-          }*
-        })?),
-  empty
-\string = xsd:string
-Plugin =
-  ((notAllowed
-    | element groupId { \string })?
-   & (notAllowed
-      | element artifactId { \string })?
-   & (notAllowed
-      | element version { \string })?
-   & (notAllowed
-      | element extensions { boolean })?
-   & (notAllowed
-      | element executions {
-          element execution {
-            element id { \string }?
-            & element phase { \string }?
-            & element goals {
-                element goal { \string }*
-              }?
-            & element inherited { \string }?
-            & element configuration { element9* }?
-          }*
-        })?
-   & (notAllowed
-      | element dependencies {
-          element dependency { Dependency }*
-        })?
-   & (notAllowed
-      | element goals { element10* })?
-   & (notAllowed
-      | element inherited { \string })?
-   & (notAllowed
-      | element configuration { element11* })?),
-  empty
-PluginManagement =
-  (notAllowed
-   | element plugins {
-       element plugin { Plugin }*
-     })?,
-  empty
-DependencyManagement =
-  (notAllowed
-   | element dependencies {
-       element dependency { Dependency }*
-     })?,
-  empty
 RepositoryPolicy =
   ((notAllowed
     | element enabled { boolean })?
@@ -458,4 +454,10 @@ RepositoryPolicy =
       | element updatePolicy { \string })?
    & (notAllowed
       | element checksumPolicy { \string })?),
+  empty
+DependencyManagement =
+  (notAllowed
+   | element dependencies {
+       element dependency { Dependency }*
+     })?,
   empty
