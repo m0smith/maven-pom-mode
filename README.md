@@ -11,7 +11,7 @@ I am creating this mode to pull together a lot of the ideas on pom editting from
 * Integrates with nxml-mode for error highlighting and code completion.  
 * `C-M-i` give valid suggestions. 
 * `C-c /` will close a tag.
-* Search for artifacts in maven central and insert dependency tag via `maven-pom-search`
+* Search for artifacts in maven central and insert dependency tag via `maven-pom-add-dependency`
 
 ## Installation
 
