@@ -160,7 +160,7 @@
       groupId artifactId version))
     (indent-region start (point))))
 
-(defun maven-pom-search (search-term)
+(defun maven-pom-add-dependency (search-term)
   "Do search, then choose groupId, then choose version.  Search
 for artifact by search term and return the GAV"
   (interactive "MSearch: ")
