@@ -143,9 +143,29 @@
                   (maven-pom-search-json-to-vector (maven-pom-search-for-versions groupId artifactId)))))
     (completing-read "Choose Version: " versions nil t coord)))
 
+(defun maven-pom-insert-dependency-xml (coord)
+  "Generate the dependency xml to insert into pom for coord <groupId:artifactId:version>"
+  (interactive "MGroupId:ArtifactId:Version: ")
+  (let ((groupId (car (split-string coord ":")))
+        (artifactId (cadr (split-string coord ":")))
+        (version (caddr (split-string coord ":")))
+        (start (point)))
+    (insert
+     (message
+      (concat "<dependency>\n" 
+              "  <groupId>%s</groupId>\n"
+              "  <artifactId>%s</artifactId>\n"
+              "  <version>%s</version>\n"
+              "</dependency>\n")
+      groupId artifactId version))
+    (indent-region start (point))))
+
 (defun maven-pom-search (search-term)
-  "Search for artifact by search term and return the GAV"
+  "Do search, then choose groupId, then choose version.  Search
+for artifact by search term and return the GAV"
   (interactive "MSearch: ")
-  (maven-pom-search-completing-versions (maven-pom-search-completing-groupIds search-term)))
+  (maven-pom-insert-dependency-xml (maven-pom-search-completing-versions 
+                              (maven-pom-search-completing-groupIds search-term))))
+
 
 
