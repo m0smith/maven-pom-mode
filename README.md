@@ -9,9 +9,9 @@ I am creating this mode to pull together a lot of the ideas on pom editting from
 ## What it is good for
 
 * Integrates with nxml-mode for error highlighting and code completion.  
-** `C-M-i` give valid suggestions. 
-** `C-c /` will close a tag.
-* Search for artifacts in maven central via `maven-pom-search`
+* `C-M-i` give valid suggestions. 
+* `C-c /` will close a tag.
+* Search for artifacts in maven central and insert dependency tag via `maven-pom-search`
 
 ## Installation
 
