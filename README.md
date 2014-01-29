@@ -8,7 +8,9 @@ I am creating this mode to pull together a lot of the ideas on pom editting from
 
 ## What it is good for
 
-* Integrates with nxml-mode for error highlighting and code completion.  `C-M-i` give valid suggestions. `C-c /` will close a tag.
+* Integrates with nxml-mode for error highlighting and code completion.  
+** `C-M-i` give valid suggestions. 
+** `C-c /` will close a tag.
 * Search for artifacts in maven central via `maven-pom-search`
 
 ## Installation
@@ -28,6 +30,6 @@ In Emacs:
 
 ## Acknowledgements
 
-I am indeed standing on the shoulders of giants included:
+I am indeed standing on the shoulders of giants including:
 *  [torstein.k.johansen](http://tkj.freeshell.org/emacs/xml/#my-rnc-files) for nXML integration ideas and files
 *  [Dave Paroulek](https://github.com/upgradingdave/maven-mode) for the work on searching for artifacts in maven central (or other nexus repo)
