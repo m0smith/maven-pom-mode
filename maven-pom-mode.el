@@ -49,6 +49,11 @@
   :group 'maven-pom-mode
   :type 'directory)
 
+(defcustom maven-pom-mode-hook nil
+  "Run at the very end of `maven-pom-mode'."
+  :group 'maven-pom-mode
+  :type 'hook)
+
 (eval-after-load 'nxml-mode
   '(progn
      (add-to-list 'rng-schema-locating-files 
@@ -169,4 +174,32 @@ for artifact by search term and return the GAV"
                               (maven-pom-search-completing-groupIds search-term))))
 
 
+;;
+;; Define the mode map
+;;
+
+
+(defvar maven-pom-mode-map
+  (let ((map (make-keymap)))
+    (set-keymap-parent map nxml-mode-map)
+    (define-key map  "\C-cd" 'maven-pom-add-dependency)
+    map))
+
+;;
+;; Define maven-pom mode.
+(define-derived-mode maven-pom-mode nxml-mode 
+  "maven-pom-mode" "Major mode for editting Maven pom files
+
+\\{maven-pom-mode-map}
+
+"
+  (use-local-map maven-pom-mode-map)
+  (run-mode-hooks 'maven-pom-mode-hook))
+
+;;
+;; Setup the auto mode for pom files
+;;
+
+(add-to-list 'auto-mode-alist '("pom\\.xml\\'" . maven-pom-mode))
+(add-to-list 'auto-mode-alist '("\\.pom\\'" . maven-pom-mode))
 
