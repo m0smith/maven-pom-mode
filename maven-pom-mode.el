@@ -134,13 +134,14 @@
   (interactive "MSearch: ")
   (let* ((artifactId (cadr (split-string coord ":")))
          (groupId (car (split-string coord ":")))
+	 (vvv (maven-pom-search-for-versions groupId artifactId))
          (versions 
           (mapcar (lambda (x) 
                     (concat 
                      (maven-pom-groupId-from-alist x) ":"
                      (maven-pom-artifactId-from-alist x) ":"
                      (maven-pom-version-from-alist x) ))
-                  (maven-pom-search-json-to-vector (maven-pom-search-for-versions groupId artifactId)))))
+                  (maven-pom-search-json-to-vector vvv))))
     (completing-read "Choose Version: " versions nil t coord)))
 
 (defun maven-pom-insert-dependency-xml (coord)
