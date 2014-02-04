@@ -13,7 +13,7 @@ I am creating this mode to pull together a lot of the ideas on pom editting from
 * `C-c /` will close a tag.
 * `C-c i` will ccomplete an inline tag.
 * `C-c b` will ccomplete an block tag.
-* `C-c d` will Search for artifacts in maven central and insert dependency tag via `maven-pom-add-dependency`.  NOTE the point has to be in the right place in the pom file when called.
+* `C-c d` will Search for artifacts in maven central and insert dependency tag via `maven-pom-add-dependency`.
 
 ## Installation
 
