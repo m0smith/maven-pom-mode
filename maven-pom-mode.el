@@ -56,6 +56,11 @@
   :group 'maven-pom-mode
   :type 'hook)
 
+(defcustom maven-pom-scopes (list "compile" "import" "provided" "runtime" "system" "test" )
+  "The valid scopes"
+  :group 'maven-pom-mode
+  :type '(repeat string))
+
 (eval-after-load 'nxml-mode
   '(progn
      (add-to-list 'rng-schema-locating-files 
@@ -162,7 +167,7 @@
 
 (defun maven-pom-read-scope (scope-flag)
   (when scope-flag
-    (let* ((scopes (list "compile" "import" "provided" "runtime" "system" "test" ))
+    (let* ((scopes maven-pom-scopes)
 	   (rtnval (completing-read "Choose Scope: " scopes  nil t "test")))
       (if (string= "compile" rtnval) nil rtnval))))
 
@@ -214,7 +219,7 @@
     
 (defun maven-pom-add-dependency (search-term &optional scope-flag) 
   "Do search, then choose groupId, then choose version.  Search
-for artifact by search term and return the GAV
+for artifact by search term and insert the dependency stanza.
 
 With a prefix, prompt for scope.  If the 'compile' scope is chosen, no scope tag is insereted"
   (interactive "MSearch: \nP")
