@@ -160,12 +160,19 @@
                   (maven-pom-search-json-to-vector vvv))))
     (completing-read "Choose Version: " versions nil t coord)))
 
-(defun maven-pom-insert-dependency-xml (coord)
+(defun maven-pom-read-scope (scope-flag)
+  (when scope-flag
+    (let* ((scopes (list "compile" "import" "provided" "runtime" "system" "test" ))
+	   (rtnval (completing-read "Choose Scope: " scopes  nil t "test")))
+      (if (string= "compile" rtnval) nil rtnval))))
+
+(defun maven-pom-insert-dependency-xml (coord &optional scope-flag)
   "Generate the dependency xml to insert into pom for coord <groupId:artifactId:version>"
-  (interactive "MGroupId:ArtifactId:Version: ")
+  (interactive "MGroupId:ArtifactId:Version: \nP")
   (let ((groupId (car (split-string coord ":")))
         (artifactId (cadr (split-string coord ":")))
         (version (cadr (cdr (split-string coord ":"))))
+	(scope (maven-pom-read-scope scope-flag))
         (start (point)))
     (insert
      (message
@@ -173,8 +180,9 @@
               "  <groupId>%s</groupId>\n"
               "  <artifactId>%s</artifactId>\n"
               "  <version>%s</version>\n"
+	      (if scope "  <scope>%s</scope>\n" "%s" )
               "</dependency>\n")
-      groupId artifactId version))
+      groupId artifactId version (if scope scope "")))
     (indent-region start (point))))
 
 
@@ -198,15 +206,18 @@
 	    (xmltok-forward))
 	  (list (xmltok-start-tag-qname) xmltok-start)))))
 
-(defun maven-pom-add-dependency* (search-term)
-  (interactive "MSearch: ")
-  (maven-pom-insert-dependency-xml (maven-pom-search-completing-versions 
-                              (maven-pom-search-completing-groupIds search-term))))
+(defun maven-pom-add-dependency* (search-term &optional scope-flag)
+  (interactive "MSearch: \nP")
+  (let* ((gids (maven-pom-search-completing-groupIds search-term))
+	 (vs (maven-pom-search-completing-versions gids)))
+    (maven-pom-insert-dependency-xml vs scope-flag)))
     
-(defun maven-pom-add-dependency (search-term) 
+(defun maven-pom-add-dependency (search-term &optional scope-flag) 
   "Do search, then choose groupId, then choose version.  Search
-for artifact by search term and return the GAV"
-  (interactive "MSearch: ")
+for artifact by search term and return the GAV
+
+With a prefix, prompt for scope.  If the 'compile' scope is chosen, no scope tag is insereted"
+  (interactive "MSearch: \nP")
   (let ((ip-list (maven-pom-find-dependency-insertion-point)))
     (if (string= "/project" (car ip-list))
 	(progn
@@ -219,7 +230,7 @@ for artifact by search term and return the GAV"
 	  (maven-pom-add-dependency search-term))
       (progn
 	(goto-char (car (cdr ip-list)))
-	(maven-pom-add-dependency* search-term)
+	(maven-pom-add-dependency* search-term scope-flag)
 	(indent-for-tab-command)))))
 
 ;;
