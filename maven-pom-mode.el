@@ -211,12 +211,16 @@ for artifact by search term and return the GAV"
     (if (string= "/project" (car ip-list))
 	(progn
 	  (goto-char (car (cdr ip-list)))
+	  (insert "\n")
+	  (goto-char (car (cdr ip-list)))
 	  (insert "<dependencies")
+	  (indent-for-tab-command)
 	  (nxml-balanced-close-start-tag-block)
 	  (maven-pom-add-dependency search-term))
       (progn
 	(goto-char (car (cdr ip-list)))
-	(maven-pom-add-dependency* search-term)))))
+	(maven-pom-add-dependency* search-term)
+	(indent-for-tab-command)))))
 
 ;;
 ;; Define the mode map
