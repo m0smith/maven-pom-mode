@@ -36,8 +36,10 @@
 
 ;;; Code:
 
+(require 'nxml-mode)
 
 (autoload 'json-read-from-string "json")
+
 
 (defgroup maven-pom-mode nil
   "Major mode for editting pom.xml files")
@@ -60,6 +62,15 @@
 		  (expand-file-name (format "%s/%s" 
 					    maven-pom-mode-install-directory
 					    "schemas.xml")))))
+
+
+;;
+;; Setup the auto mode for pom files
+;;
+
+(add-to-list 'auto-mode-alist '("pom\\.xml\\'" . maven-pom-mode))
+(add-to-list 'auto-mode-alist '("\\.pom\\'" . maven-pom-mode))
+
 
 ;;;; mvn-search.el --- do searches against search.maven.org
 ;;;; From https://github.com/upgradingdave/maven-mode/blob/master/mvn-search.el
@@ -154,7 +165,7 @@
   (interactive "MGroupId:ArtifactId:Version: ")
   (let ((groupId (car (split-string coord ":")))
         (artifactId (cadr (split-string coord ":")))
-        (version (caddr (split-string coord ":")))
+        (version (cadr (cdr (split-string coord ":"))))
         (start (point)))
     (insert
      (message
@@ -166,13 +177,46 @@
       groupId artifactId version))
     (indent-region start (point))))
 
-(defun maven-pom-add-dependency (search-term)
-  "Do search, then choose groupId, then choose version.  Search
-for artifact by search term and return the GAV"
+
+
+(defun maven-pom-find-dependency-insertion-point ()
+  "Find the point to insert a new depndency stanza.  Returns a list.  The first element is either \"/dependecies\", \"/project\" or nil. The second element is the point.
+
+    /dependencies - Insert the dependency stanza 
+    /project - Needs a dependencies stanze wrapping the dependency
+    nil - malformed pom file.  Do not insert anything
+
+"
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (if (xmltok-forward)
+	(progn 
+	  (while (and (< (point) nxml-scan-end)
+		      (not (string= (xmltok-start-tag-qname)  "/dependencies"))
+		      (not (string= (xmltok-start-tag-qname)  "/project")))
+	    (xmltok-forward))
+	  (list (xmltok-start-tag-qname) xmltok-start)))))
+
+(defun maven-pom-add-dependency* (search-term)
   (interactive "MSearch: ")
   (maven-pom-insert-dependency-xml (maven-pom-search-completing-versions 
                               (maven-pom-search-completing-groupIds search-term))))
-
+    
+(defun maven-pom-add-dependency (search-term) 
+  "Do search, then choose groupId, then choose version.  Search
+for artifact by search term and return the GAV"
+  (interactive "MSearch: ")
+  (let ((ip-list (maven-pom-find-dependency-insertion-point)))
+    (if (string= "/project" (car ip-list))
+	(progn
+	  (goto-char (car (cdr ip-list)))
+	  (insert "<dependencies")
+	  (nxml-balanced-close-start-tag-block)
+	  (maven-pom-add-dependency search-term))
+      (progn
+	(goto-char (car (cdr ip-list)))
+	(maven-pom-add-dependency* search-term)))))
 
 ;;
 ;; Define the mode map
@@ -183,7 +227,7 @@ for artifact by search term and return the GAV"
   (let ((map (make-keymap)))
     (set-keymap-parent map nxml-mode-map)
     (define-key map  "\C-cd" 'maven-pom-add-dependency)
-    map))
+	 map))
 
 ;;
 ;; Define maven-pom mode.
@@ -195,11 +239,3 @@ for artifact by search term and return the GAV"
 "
   (use-local-map maven-pom-mode-map)
   (run-mode-hooks 'maven-pom-mode-hook))
-
-;;
-;; Setup the auto mode for pom files
-;;
-
-(add-to-list 'auto-mode-alist '("pom\\.xml\\'" . maven-pom-mode))
-(add-to-list 'auto-mode-alist '("\\.pom\\'" . maven-pom-mode))
-
