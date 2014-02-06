@@ -202,23 +202,24 @@
 
 
 (defun maven-pom-find-dependency-insertion-point ()
-  "Find the point to insert a new depndency stanza.  Returns a list.  The first element is either \"/dependecies\", \"/project\" or nil. The second element is the point.
+  "Find the point to insert a new depndency stanza.  Returns a list.  The first element is either \"/dependencies\", \"/project\" or nil. The second element is the point.
 
     /dependencies - Insert the dependency stanza 
-    /project - Needs a dependencies stanze wrapping the dependency
+    /project - Needs a dependencies stanza wrapping the dependency
     nil - malformed pom file.  Do not insert anything
 
 "
   (interactive)
   (save-excursion
     (goto-char (point-min))
-    (if (xmltok-forward)
-	(progn 
-	  (while (and (< (point) nxml-scan-end)
-		      (not (string= (xmltok-start-tag-qname)  "/dependencies"))
-		      (not (string= (xmltok-start-tag-qname)  "/project")))
-	    (xmltok-forward))
-	  (list (xmltok-start-tag-qname) xmltok-start)))))
+    (while (and (xmltok-forward)
+		(not (string= (xmltok-start-tag-qname)  "/dependencies"))
+		(not (string= (xmltok-start-tag-qname)  "/project"))))
+    (let ((name (xmltok-start-tag-qname)))
+      (if (or (string= "/dependencies" name)
+	      (string= "/project" name))
+	  (list name xmltok-start)
+	nil))))
 
 (defun maven-pom-add-dependency* (search-term &optional scope-flag)
   (interactive "MSearch: \nP")
