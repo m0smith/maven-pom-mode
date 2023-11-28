@@ -199,7 +199,26 @@
       groupId artifactId version (if scope scope "")))
     (indent-region start (point))))
 
-
+(defun maven-pom-insert-skeleton (groupId artifactId version)
+  "Insert the basic maven skeleton XML."
+  (interactive "sGroup to use? \nsArtifact to use? \nsVersion to use? ")
+  (let ((start (point)))
+    (insert (format "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>%s</groupId>
+	<artifactId>%s</artifactId>
+	<version>%s</version>
+	<properties>
+	</properties>
+	<dependencies>
+  </dependencies>
+	<build>
+		<plugins>
+		</plugins>
+	</build>
+</project>" groupId artifactId version))
+    (indent-region start (point))))
 
 (defun maven-pom-find-dependency-insertion-point ()
   "Find the point to insert a new depndency stanza.  Returns a list.  The first element is either \"/dependencies\", \"/project\" or nil. The second element is the point.
